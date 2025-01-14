@@ -1,0 +1,41 @@
+# services/orchestrator/.github/workflows/ci.yml
+name: Orchestrator CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+
+    - name: Install dependencies
+      run: |
+        poetry install
+
+    - name: Run linting
+      run: |
+        poetry run pylint src/
+        poetry run black --check src/
+
+    - name: Run tests
+      run: |
+        poetry run pytest
+
+    - name: Type checking
+      run: |
+        poetry run mypy src/

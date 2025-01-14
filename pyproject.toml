@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "orchestrator-service"
+version = "0.1.0"
+description = "Service orchestrator using FastAPI"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+packages = [{include = "orchestrator_service", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.108.0"
+uvicorn = {extras = ["standard"], version = "^0.25.0"}
+python-multipart = "^0.0.6"
+grpcio = "^1.60.0"
+grpcio-tools = "^1.60.0"
+pydantic = "^2.5.3"
+pydantic-settings = "^2.1.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.12.1"
+pylint = "^3.0.3"
+pytest = "^7.4.3"
+httpx = "^0.26.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

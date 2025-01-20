@@ -9,11 +9,9 @@ RUN pip install grpcio grpcio-tools
 COPY proto/ proto/
 
 # Make sure we have __init__.py so that "proto" becomes a Python package
-RUN touch proto/__init__.py && touch proto/v1/__init__.py
-RUN apt-get update && apt-get install -y tree
-
-# Generate Python stubs
-RUN python3 -m grpc_tools.protoc \
+RUN touch proto/__init__.py && touch proto/v1/__init__.py && \
+    apt-get update && apt-get install -y tree && rm -rf /var/lib/apt/lists/* && \
+    python3 -m grpc_tools.protoc \
     -I=. \
     --python_out=. \
     --grpc_python_out=. \

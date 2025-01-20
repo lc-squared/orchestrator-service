@@ -21,6 +21,7 @@ black = "^23.12.1"
 pylint = "^3.0.3"
 pytest = "^7.4.3"
 httpx = "^0.26.0"
+typing-extensions = "^4.8.0"
 
 [build-system]
 requires = ["poetry-core"]

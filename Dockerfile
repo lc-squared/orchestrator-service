@@ -1,18 +1,37 @@
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install poetry
-RUN pip install poetry
+# Install compile-time dependencies
+RUN pip install grpcio grpcio-tools
 
-# Copy poetry files
-COPY pyproject.toml poetry.lock ./
+# Copy the proto folder from root into /app/proto
+COPY proto/ proto/
 
-# Install dependencies
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-dev --no-interaction --no-ansi
+# Make sure we have __init__.py so that "proto" becomes a Python package
+RUN touch proto/__init__.py && touch proto/v1/__init__.py
+RUN apt-get update && apt-get install -y tree
 
-# Copy application code
-COPY . .
+# Generate Python stubs
+RUN python3 -m grpc_tools.protoc \
+    -I=. \
+    --python_out=. \
+    --grpc_python_out=. \
+    --proto_path=. \
+    ./proto/v1/document.proto \
+    ./proto/v1/logic.proto \
+    ./proto/v1/orchestrator.proto
 
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# Copy the actual orchestrator server code
+COPY services/orchestrator-service/src/ ./src/
+
+# Optionally set a PYTHONPATH
+ENV PYTHONPATH=/app:$PYTHONPATH
+
+EXPOSE 50050
+
+RUN tree
+
+
+CMD ["python", "-u", "src/app.py"]
